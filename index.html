@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="height: 100vh; background: #111; text-align:center; color:white">
+    <canvas style ="border: 2px solid skyblue touch-action:manipulation" id="c" width="400" height="400"></canvas>
+</body>
+
+<script>
+    context = c.getContext("2d");
+    const bird = new Image();
+    bird.src="bird.png";
+
+    const getPipeSize=()=> {
+        let pipeSize =  Math.random()*200-24 
+        return pipeSize < 50 ? 50 : pipeSize
+     }
+     const resetPipes=()=>{
+            pipeX=400
+            topPipeSize=getPipeSize()
+             bottomPipeSize=getPipeSize()
+     }
+    const  interval = 24;
+    const birdSize = 24
+
+   let  birdX = 0;
+    let  birdY=200
+    let birdDY=0
+    let canvasSize = 400
+    let pipeX = 400
+   let topPipeSize = getPipeSize()
+   let bottomPipeSize= getPipeSize()
+   let score=bestScore=0
+    c.onclick = () => (birdDY = 9)
+
+    setInterval(()=>{
+        context.fillStyle = "skyblue"
+        context.fillRect(0,0,canvasSize,canvasSize);
+        context.drawImage(bird, birdX, birdY, birdSize * (524/374), birdSize);
+        birdY -= birdDY -= 0.5;
+        pipeX-= 8
+        pipeX < -birdSize && resetPipes() // pipe disappearing mechanics
+        birdY < 0 ?  (birdY=0):"";
+        context.fillStyle= "green"
+        context.fillRect(pipeX,0,birdSize,topPipeSize)// top pipe
+
+        context.fillRect(pipeX,400,birdSize,-bottomPipeSize) //bottom pipe
+        context.fillStyle = "black"
+        context.fillText(score++,9,25)
+        context.fillText(bestScore,9,50)
+        if (((birdX >= pipeX && birdX <= pipeX+birdSize*(524/374)) && (birdY<=topPipeSize || birdY>=400-bottomPipeSize)) || (birdY>400)) { 
+            birdY=200 
+            birdDY=0
+            resetPipes()
+            bestScore = score>=bestScore? score:bestScore
+            score=0
+        }  //game over mechanics 
+
+ 
+    }, interval);
+
+     
+</script>
+</html>
